@@ -8,9 +8,11 @@ namespace Identity.Controllers
     {
 
         private UserManager<AppUser> userManager;
-        public AdminController(UserManager<AppUser> usrMgr)
+        private IPasswordHasher<AppUser> passwordHasher;
+        public AdminController(UserManager<AppUser> usrMgr, IPasswordHasher<AppUser> passwordHash)
         {
             userManager = usrMgr;
+            passwordHasher = passwordHash;
         }
         public IActionResult Index()
         {
