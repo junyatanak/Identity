@@ -44,5 +44,33 @@ namespace Identity.Controllers
             
         }
 
+        public async Task<IActionResult> Update(string id)
+        {
+            AppUser user = await userManager.FindByIdAsync(id);
+            if(user != null)
+                return View(user);
+            else
+                return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Update(string id, string email, string password)
+        {
+            AppUser user = await userManager.FindByIdAsync(id);
+            if(user != null)
+            {
+                if(!string.IsNullOrEmpty(email))
+                    user.Email = email;
+                else
+                    ModelState.AddModelError("","Email cannot be empty.");
+
+                if(!string.IsNullOrEmpty(password))
+                    user.PasswordHash = passwordHasher.HashPassword(user,password);
+                else
+                    ModelState.AddModelError("","Password cannot be empty.");
+
+            }
+        }
+
     }
 }
