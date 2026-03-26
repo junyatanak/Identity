@@ -1,3 +1,4 @@
+using Identity.IdentityPolicy;
 using Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ builder.Services.Configure<IdentityOptions>(opts =>
     opts.Password.RequireNonAlphanumeric = false;
     opts.Password.RequiredLength = 4;
 });
+builder.Services.AddTransient<IPasswordValidator<AppUser>,CustomPasswordPolicy>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
