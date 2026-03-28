@@ -17,6 +17,8 @@ builder.Services.AddIdentity<AppUser,IdentityRole>().AddEntityFrameworkStores<Ap
 
 builder.Services.Configure<IdentityOptions>(opts =>
 {
+    opts.User.RequireUniqueEmail = true;
+    opts.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyz";
     opts.Password.RequireNonAlphanumeric = false;
     opts.Password.RequiredLength = 4;
 });
