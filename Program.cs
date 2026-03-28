@@ -23,6 +23,7 @@ builder.Services.Configure<IdentityOptions>(opts =>
     opts.Password.RequiredLength = 4;
 });
 builder.Services.AddTransient<IPasswordValidator<AppUser>,CustomPasswordPolicy>();
+builder.Services.AddTransient<IUserValidator<AppUser>,CustomUsernameEmailPolicy>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
