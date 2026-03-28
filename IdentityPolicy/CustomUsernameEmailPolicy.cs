@@ -18,7 +18,7 @@ public class CustomUsernameEmailPolicy:UserValidator<AppUser>
                 Description = "Google cannot be used as a user name"
             });
         }
-        if (!user.Email.ToLower().EndsWith("@yahoo.com"))
+        if (!user.Email!.ToLower().EndsWith("@yahoo.com"))
         {
             errors.Add(new IdentityError
             {
