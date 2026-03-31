@@ -25,7 +25,7 @@ builder.Services.Configure<IdentityOptions>(opts =>
 builder.Services.AddTransient<IPasswordValidator<AppUser>,CustomPasswordPolicy>();
 builder.Services.AddTransient<IUserValidator<AppUser>,CustomUsernameEmailPolicy>();
 
-builder.Services.ConfigureApplicationCookie(opts => opts.LoginPath = "/Authenticate/Login");
+builder.Services.ConfigureApplicationCookie(opts => opts.LoginPath = "/Account/Login");
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

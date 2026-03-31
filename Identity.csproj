@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <Folder Include="IdentityPolicy\" />
+    <Folder Include="Views\Account\" />
   </ItemGroup>
 
 
