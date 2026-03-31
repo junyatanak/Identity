@@ -31,6 +31,10 @@ namespace Identity.Controllers
             return View(login);
         }
 
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+
         public async Task<IActionResult> Login(Login login)
         {
             if (ModelState.IsValid)
