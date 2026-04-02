@@ -2,11 +2,17 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Identity.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace Identity.Controllers;
 
 public class HomeController : Controller
 {
+    private UserManager<AppUser> userManager;
+    public HomeController(UserManager<AppUser> userMgr)
+    {
+        userManager = userMgr;
+    }
     public IActionResult Index()
     {
         return View();
@@ -24,8 +30,10 @@ public class HomeController : Controller
     }
 
     [Authorize]
-    public IActionResult Secured()
+    public async Task<IActionResult> Secured()
     {
-        return View((object)"Hello");
+        AppUser? user = await userManager.GetUserAsync(HttpContext.User);
+        string message = "Hello " + user!.UserName;
+        return View((object)message);
     }
 }
