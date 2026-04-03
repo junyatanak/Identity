@@ -25,7 +25,13 @@ builder.Services.Configure<IdentityOptions>(opts =>
 builder.Services.AddTransient<IPasswordValidator<AppUser>,CustomPasswordPolicy>();
 builder.Services.AddTransient<IUserValidator<AppUser>,CustomUsernameEmailPolicy>();
 
-builder.Services.ConfigureApplicationCookie(opts => opts.LoginPath = "/Account/Login");
+builder.Services.ConfigureApplicationCookie(opts => 
+{
+    opts.LoginPath = "/Account/Login";
+    opts.Cookie.Name = ".AspNetCore.Identity.Application";
+    opts.ExpireTimeSpan = TimeSpan.FromMinutes(1);
+    opts.SlidingExpiration = true;
+});
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
