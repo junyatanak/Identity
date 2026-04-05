@@ -19,6 +19,7 @@
   <ItemGroup>
     <Folder Include="IdentityPolicy\" />
     <Folder Include="Views\Account\" />
+    <Folder Include="Views\Role\" />
   </ItemGroup>
 
 
