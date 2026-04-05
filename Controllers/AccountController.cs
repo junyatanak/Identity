@@ -43,8 +43,7 @@ namespace Identity.Controllers
                 if(appUser != null)
                 {
                     await signInManager.SignOutAsync();
-                    Microsoft.AspNetCore.Identity.SignInResult result = await signInManager
-                    .PasswordSignInAsync(appUser,login.Password,false,false);
+                    Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync(appUser,login.Password,login.Remember,false);
                     if(result.Succeeded)
                         return Redirect(login.ReturnUrl ?? "/");      
                 }
