@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="CustomTagHelpers\" />
     <Folder Include="IdentityPolicy\" />
     <Folder Include="Views\Account\" />
     <Folder Include="Views\Role\" />
