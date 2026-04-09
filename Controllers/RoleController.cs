@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc; 
+using System.ComponentModel.DataAnnotations;
 
 namespace Identity.Controllers
 {
@@ -19,6 +20,23 @@ namespace Identity.Controllers
             {
                 ModelState.AddModelError("",error.Description);
             }
+        }
+
+        public IActionResult Create() => View();
+
+        [HttpPost]
+        public async Task<IActionResult> Create([Required] string name)
+        {
+            if (ModelState.IsValid)
+            {
+                IdentityResult result = await roleManager.CreateAsync(new IdentityRole(name));
+                if(result.Succeeded)
+                    return RedirectToAction("Index");
+                else
+                    Errors(result);
+            }
+            return View(name);
+            
         }
 
 
