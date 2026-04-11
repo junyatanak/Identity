@@ -25,7 +25,8 @@ public class RoleUsersTH:TagHelper
         IdentityRole? role = await roleManager.FindByIdAsync(Role);
         if(role != null)
         {
-            foreach(var user in userManager.Users)
+            var users = userManager.Users.ToList();
+            foreach(var user in users)
             {
                 if(user != null && await userManager.IsInRoleAsync(user,role.Name!))
                 names.Add(user.UserName!);
