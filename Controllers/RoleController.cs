@@ -1,5 +1,7 @@
+using Identity.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc; 
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.ComponentModel.DataAnnotations;
 
 namespace Identity.Controllers
@@ -7,9 +9,11 @@ namespace Identity.Controllers
     public class RoleController : Controller
     {
         private RoleManager<IdentityRole> roleManager;
-        public RoleController(RoleManager<IdentityRole> roleMgr)
+        private UserManager<AppUser> userManager;
+        public RoleController(RoleManager<IdentityRole> roleMgr, UserManager<AppUser> userMgr)
         {
             roleManager = roleMgr;
+            userManager = userMgr;
         }
 
         public ViewResult Index() => View(roleManager.Roles.ToList());
@@ -55,6 +59,71 @@ namespace Identity.Controllers
                 ModelState.AddModelError("","No role found");
             
             return View("Index",roleManager.Roles);
+        }
+
+        public async Task<IActionResult> Update(string id)
+        {
+            IdentityRole? role = await roleManager.FindByIdAsync(id);
+
+            if(role is null)
+            {
+                return NotFound();
+            }
+
+            if (string.IsNullOrEmpty(role.Name))
+            {
+                return BadRequest("Role name is missing");
+            }
+
+            List<AppUser> members = new List<AppUser>();
+            List<AppUser> nonMembers = new List<AppUser>();
+            // List<AppUser> users = userManager.Users.ToList();
+            foreach(AppUser user in userManager.Users)
+            {
+                var list = await userManager.IsInRoleAsync(user,role.Name) ? members : nonMembers;
+                list.Add(user);
+            }
+            return View(new RoleEdit
+            {
+                Role = role,
+                Members = members,
+                NonMembers = nonMembers
+            });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Update(RoleModification model)
+        {
+            IdentityResult result = new IdentityResult();
+            if (ModelState.IsValid)
+            {
+                foreach(string userId in model.AddIds ?? new string[] { })
+                {
+                    AppUser? user = await userManager.FindByIdAsync(userId);
+                    if(user != null)
+                    {
+                        result = await userManager.AddToRoleAsync(user,model.RoleName);
+                        if(!result.Succeeded)
+                            Errors(result);
+                    }                    
+                }
+                foreach(string userId in model.DeleteIds ?? new string[] { })
+                {
+                    AppUser? user = await userManager.FindByIdAsync(userId);
+                    if(user is not null)
+                    {
+                        result = await userManager.RemoveFromRoleAsync(user,model.RoleName);
+                        if(!result.Succeeded)
+                            Errors(result);
+                    }
+                }
+            }
+            if(ModelState.IsValid)
+                return RedirectToAction(nameof(Index));
+            else
+                return await Update(model.RoleId);
+
+            
         }
 
 
