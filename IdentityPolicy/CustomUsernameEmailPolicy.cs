@@ -18,13 +18,13 @@ public class CustomUsernameEmailPolicy:UserValidator<AppUser>
                 Description = "Google cannot be used as a user name"
             });
         }
-        if (!user.Email!.ToLower().EndsWith("@yahoo.com"))
-        {
-            errors.Add(new IdentityError
-            {
-                Description = "Only yahoo.com email addresses are allowed"
-            });
-        }
+        // if (!user.Email!.ToLower().EndsWith("@yahoo.com"))
+        // {
+        //     errors.Add(new IdentityError
+        //     {
+        //         Description = "Only yahoo.com email addresses are allowed"
+        //     });
+        // }
         return errors.Count == 0 ? IdentityResult.Success : IdentityResult.Failed(errors.ToArray());
     }
 

@@ -77,8 +77,8 @@ namespace Identity.Controllers
 
             List<AppUser> members = new List<AppUser>();
             List<AppUser> nonMembers = new List<AppUser>();
-            // List<AppUser> users = userManager.Users.ToList();
-            foreach(AppUser user in userManager.Users)
+            List<AppUser> users = userManager.Users.ToList();
+            foreach(AppUser user in users)
             {
                 var list = await userManager.IsInRoleAsync(user,role.Name) ? members : nonMembers;
                 list.Add(user);
