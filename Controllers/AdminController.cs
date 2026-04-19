@@ -1,6 +1,7 @@
 using Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Identity.Controllers
 {
@@ -33,7 +34,10 @@ namespace Identity.Controllers
                 AppUser appUser = new AppUser
                 {
                     UserName = user.Name,
-                    Email = user.Email
+                    Email = user.Email,
+                    Country = user.Country,
+                    Age = user.Age,
+                    Salary = user.Salary
                 };
                 IdentityResult result = await userManager.CreateAsync(appUser, user.Password);
                 if(result.Succeeded)
@@ -58,48 +62,51 @@ namespace Identity.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update(string id, string email, string password)
+        public async Task<IActionResult> Update(string id, string email, string password,int age, Country country,string salary)
         {
             AppUser? user = await userManager.FindByIdAsync(id);
-            if(user != null)
+            if(user == null)
             {
-                IdentityResult validEmail = null!;
-                if(!string.IsNullOrEmpty(email))
-                {
-                    validEmail = await userValidator.ValidateAsync(userManager,user);
-                    if(validEmail.Succeeded)
-                        user.Email = email;
-                    else
-                        Errors(validEmail);
-                }
-                else
-                    ModelState.AddModelError("","Email cannot be empty.");
+                ModelState.AddModelError("", "User Not Found");
+                return View(user);
+            }
+            
+            user.Email = email;
+            user.Age = age;
+            user.Country = country;
+            user.Salary = salary;
 
-                IdentityResult validPass = null!;
-                if(!string.IsNullOrEmpty(password))
-                {
-                    validPass = await passwordValidator.ValidateAsync(userManager,user,password);
-                    if(validPass.Succeeded)
-                        user.PasswordHash = passwordHasher.HashPassword(user,password);
-                    else
-                        Errors(validPass);
-                }
-                else
-                    ModelState.AddModelError("","Password cannot be empty.");
-
-                if(validEmail != null && validPass != null && validEmail.Succeeded && validPass.Succeeded)
-                {
-                    IdentityResult result = await userManager.UpdateAsync(user);
-                    if(result.Succeeded)
-                        return RedirectToAction("Index");
-                    else
-                        Errors(result);
-                }
-
+            IdentityResult validEmail;
+            if(!string.IsNullOrEmpty(email))
+            {
+                validEmail = await userValidator.ValidateAsync(userManager,user);
+                if(!validEmail.Succeeded)
+                    Errors(validEmail);
             }
             else
-                ModelState.AddModelError("", "User Not Found");
+                ModelState.AddModelError("","Email cannot be empty.");
+
+            IdentityResult validPass;
+            if(!string.IsNullOrEmpty(password))
+            {
+                validPass = await passwordValidator.ValidateAsync(userManager,user,password);
+                if(validPass.Succeeded)
+                    user.PasswordHash = passwordHasher.HashPassword(user,password);
+                else
+                    Errors(validPass);
+            }
+            else
+                ModelState.AddModelError("","Password cannot be empty.");
+
+            var result = await userManager.UpdateAsync(user);
+                              
+            if(result.Succeeded)
+                return RedirectToAction("Index");
+
+            Errors(result);
             return View(user);
+
+
         }
 
 
