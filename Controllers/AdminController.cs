@@ -30,25 +30,27 @@ namespace Identity.Controllers
         public async Task<IActionResult> Create(User user)
         {
             if(ModelState.IsValid)
+                return View(user);
+
+            AppUser appUser = new AppUser
             {
-                AppUser appUser = new AppUser
-                {
-                    UserName = user.Name,
-                    Email = user.Email,
-                    Country = user.Country,
-                    Age = user.Age,
-                    Salary = user.Salary
-                };
-                IdentityResult result = await userManager.CreateAsync(appUser, user.Password);
-                if(result.Succeeded)
-                    return RedirectToAction("Index");
-                else
-                {
-                    foreach(IdentityError error in result.Errors)
-                    ModelState.AddModelError("",error.Description);
-                }
+                UserName = user.Name,
+                Email = user.Email,
+                Country = user.Country,
+                Age = user.Age!.Value,
+                Salary = user.Salary
+            };
+
+            IdentityResult result = await userManager.CreateAsync(appUser, user.Password);
+
+            if(result.Succeeded)
+                return RedirectToAction("Index");
+            else
+            {
+                foreach(IdentityError error in result.Errors)
+                ModelState.AddModelError("",error.Description);
+                return View(user);
             }
-            return View(user);
             
         }
 
