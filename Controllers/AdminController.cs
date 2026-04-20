@@ -98,6 +98,9 @@ namespace Identity.Controllers
             else
                 ModelState.AddModelError("","Password cannot be empty.");
 
+            if(!ModelState.IsValid)
+                return View(user);
+
             var result = await userManager.UpdateAsync(user);
                               
             if(result.Succeeded)
