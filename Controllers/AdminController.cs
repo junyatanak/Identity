@@ -58,6 +58,10 @@ namespace Identity.Controllers
         {
             AppUser? user = await userManager.FindByIdAsync(id);
             if(user != null)
+                var updateUserViewModel = new UpdateUserViewModel
+                {
+                    
+                };
                 return View(user);
             else
                 return RedirectToAction("Index");
