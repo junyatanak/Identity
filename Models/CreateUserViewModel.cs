@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Identity.Models;
 
-    public class User
+    public class CreateUserViewModel
     {
     [Required]
     public required string Name { get; set; }

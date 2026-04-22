@@ -27,21 +27,21 @@ namespace Identity.Controllers
         public ViewResult Create() => View();
 
         [HttpPost]
-        public async Task<IActionResult> Create(User user)
+        public async Task<IActionResult> Create(CreateUserViewModel createUserViewModel)
         {
             if(ModelState.IsValid)
-                return View(user);
+                return View(createUserViewModel);
 
             AppUser appUser = new AppUser
             {
-                UserName = user.Name,
-                Email = user.Email,
-                Country = user.Country,
-                Age = user.Age!.Value,
-                Salary = user.Salary
+                UserName = createUserViewModel.Name,
+                Email = createUserViewModel.Email,
+                Country = createUserViewModel.Country,
+                Age = createUserViewModel.Age!.Value,
+                Salary = createUserViewModel.Salary
             };
 
-            IdentityResult result = await userManager.CreateAsync(appUser, user.Password);
+            IdentityResult result = await userManager.CreateAsync(appUser, createUserViewModel.Password);
 
             if(result.Succeeded)
                 return RedirectToAction("Index");
@@ -49,7 +49,7 @@ namespace Identity.Controllers
             {
                 foreach(IdentityError error in result.Errors)
                 ModelState.AddModelError("",error.Description);
-                return View(user);
+                return View(createUserViewModel);
             }
             
         }
@@ -99,6 +99,7 @@ namespace Identity.Controllers
             }
             else
                 ModelState.AddModelError("","Password cannot be empty.");
+                
 
             if(!ModelState.IsValid)
                 return View(user);
