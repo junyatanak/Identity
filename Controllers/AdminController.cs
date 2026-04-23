@@ -36,7 +36,7 @@ namespace Identity.Controllers
             {
                 UserName = createUserViewModel.Name,
                 Email = createUserViewModel.Email,
-                Country = createUserViewModel.Country,
+                Country = createUserViewModel.Country!.Value,
                 Age = createUserViewModel.Age!.Value,
                 Salary = createUserViewModel.Salary
             };
@@ -58,11 +58,17 @@ namespace Identity.Controllers
         {
             AppUser? user = await userManager.FindByIdAsync(id);
             if(user != null)
+            {
                 var updateUserViewModel = new UpdateUserViewModel
                 {
-                    
+                    Id = user.Id,
+                    Email = user.Email,
+                    Age = user.Age,
+                    Country = user.Country,
+                    Salary = user.Salary
                 };
                 return View(user);
+            }
             else
                 return RedirectToAction("Index");
         }

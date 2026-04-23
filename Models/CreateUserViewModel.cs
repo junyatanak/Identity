@@ -11,7 +11,8 @@ namespace Identity.Models;
     public string Email { get; set; } = string.Empty;
     [Required]
     public string Password { get; set; } = string.Empty;
-    public Country Country { get; set; }
+    [Required]
+    public Country? Country { get; set; }
     [Required]
     public int? Age { get; set; }
     [Required]
