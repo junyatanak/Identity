@@ -62,12 +62,12 @@ namespace Identity.Controllers
                 var updateUserViewModel = new UpdateUserViewModel
                 {
                     Id = user.Id,
-                    Email = user.Email,
+                    Email = user.Email ?? string.Empty,
                     Age = user.Age,
                     Country = user.Country,
                     Salary = user.Salary
                 };
-                return View(user);
+                return View(updateUserViewModel);
             }
             else
                 return RedirectToAction("Index");
@@ -76,6 +76,8 @@ namespace Identity.Controllers
         [HttpPost]
         public async Task<IActionResult> Update(string id, string email, string password,int age, Country country,string salary)
         {
+            
+
             AppUser? user = await userManager.FindByIdAsync(id);
             if(user == null)
             {
