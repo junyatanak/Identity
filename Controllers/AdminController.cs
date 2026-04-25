@@ -27,7 +27,7 @@ namespace Identity.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateUserViewModel createUserViewModel)
         {
-            if(ModelState.IsValid)
+            if(!ModelState.IsValid)
                 return View(createUserViewModel);
 
             AppUser appUser = new AppUser
@@ -38,6 +38,13 @@ namespace Identity.Controllers
                 Age = createUserViewModel.Age!.Value,
                 Salary = createUserViewModel.Salary
             };
+
+            var validPass = await passwordValidator.ValidateAsync(userManager,appUser,createUserViewModel.Password);
+            if(!validPass.Succeeded)
+            {
+                Errors(validPass);
+                return View(createUserViewModel);
+            }
 
             IdentityResult result = await userManager.CreateAsync(appUser, createUserViewModel.Password);
 
