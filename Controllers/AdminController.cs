@@ -74,47 +74,33 @@ namespace Identity.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update(string id, string email, string password,int age, Country country,string salary)
+        public async Task<IActionResult> Update(UpdateUserViewModel updateUserViewModel)
         {
-            
+            if(!ModelState.IsValid)
+                return View(updateUserViewModel);
 
-            AppUser? user = await userManager.FindByIdAsync(id);
-            if(user == null)
+            var user = await userManager.FindByIdAsync(updateUserViewModel.Id);
+            if(user is null)
             {
                 ModelState.AddModelError("", "User Not Found");
-                return View(user);
+                return View(updateUserViewModel);
             }
             
-            user.Email = email;
-            user.Age = age;
-            user.Country = country;
-            user.Salary = salary;
+            user.Email = updateUserViewModel.Email;
+            user.Age = updateUserViewModel.Age!.Value;
+            user.Country = updateUserViewModel.Country!.Value;
+            user.Salary = updateUserViewModel.Salary;
 
-            IdentityResult validEmail;
-            if(!string.IsNullOrEmpty(email))
+            if(!string.IsNullOrEmpty(updateUserViewModel.Password))
             {
-                validEmail = await userValidator.ValidateAsync(userManager,user);
-                if(!validEmail.Succeeded)
-                    Errors(validEmail);
+                var token = await userManager.GeneratePasswordResetTokenAsync(user);
+                var passResult = await userManager.ResetPasswordAsync(user,token,updateUserViewModel.Password);
+                if (!passResult.Succeeded)
+                {
+                    Errors(passResult);
+                    return View(updateUserViewModel);
+                }
             }
-            else
-                ModelState.AddModelError("","Email cannot be empty.");
-
-            IdentityResult validPass;
-            if(!string.IsNullOrEmpty(password))
-            {
-                validPass = await passwordValidator.ValidateAsync(userManager,user,password);
-                if(validPass.Succeeded)
-                    user.PasswordHash = passwordHasher.HashPassword(user,password);
-                else
-                    Errors(validPass);
-            }
-            else
-                ModelState.AddModelError("","Password cannot be empty.");
-                
-
-            if(!ModelState.IsValid)
-                return View(user);
 
             var result = await userManager.UpdateAsync(user);
                               
@@ -123,8 +109,6 @@ namespace Identity.Controllers
 
             Errors(result);
             return View(user);
-
-
         }
 
 
