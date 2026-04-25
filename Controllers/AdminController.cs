@@ -9,13 +9,11 @@ namespace Identity.Controllers
     {
 
         private UserManager<AppUser> userManager;
-        private IPasswordHasher<AppUser> passwordHasher;
         private IPasswordValidator<AppUser> passwordValidator;
         private IUserValidator<AppUser> userValidator;
-        public AdminController(UserManager<AppUser> usrMgr, IPasswordHasher<AppUser> passwordHash, IPasswordValidator<AppUser> passwordVal, IUserValidator<AppUser> userValid)
+        public AdminController(UserManager<AppUser> usrMgr, IPasswordValidator<AppUser> passwordVal, IUserValidator<AppUser> userValid)
         {
             userManager = usrMgr;
-            passwordHasher = passwordHash;
             passwordValidator = passwordVal;
             userValidator = userValid;
         }
@@ -93,6 +91,13 @@ namespace Identity.Controllers
 
             if(!string.IsNullOrEmpty(updateUserViewModel.Password))
             {
+                var validPass = await passwordValidator.ValidateAsync(userManager,user,updateUserViewModel.Password);
+                if(!validPass.Succeeded)
+                {
+                    Errors(validPass);
+                    return View(updateUserViewModel);
+                }
+
                 var token = await userManager.GeneratePasswordResetTokenAsync(user);
                 var passResult = await userManager.ResetPasswordAsync(user,token,updateUserViewModel.Password);
                 if (!passResult.Succeeded)
@@ -103,12 +108,16 @@ namespace Identity.Controllers
             }
 
             var result = await userManager.UpdateAsync(user);
-                              
-            if(result.Succeeded)
-                return RedirectToAction("Index");
 
-            Errors(result);
-            return View(user);
+            if (!result.Succeeded)
+            {
+                Errors(result);
+                return  View(updateUserViewModel);
+            }
+            
+            return RedirectToAction("Index");
+
+
         }
 
 
