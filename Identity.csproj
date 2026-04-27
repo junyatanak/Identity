@@ -24,6 +24,7 @@
     <Folder Include="CustomTagHelpers\" />
     <Folder Include="IdentityPolicy\" />
     <Folder Include="Views\Account\" />
+    <Folder Include="Views\Claims\" />
     <Folder Include="Views\Role\" />
   </ItemGroup>
 

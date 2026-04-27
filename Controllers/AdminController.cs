@@ -22,7 +22,7 @@ namespace Identity.Controllers
             return View(userManager.Users);
         }
 
-        public ViewResult Create() => View();
+        public IActionResult Create() => View();
 
         [HttpPost]
         public async Task<IActionResult> Create(CreateUserViewModel createUserViewModel)
