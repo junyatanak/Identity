@@ -22,6 +22,11 @@ namespace Identity.Controllers
         public async Task<IActionResult> Create(string claimType, string claimValue)
         {
             var user = await userManager.GetUserAsync(User);
+            if(user is null)
+            {
+                return Unauthorized();
+            }
+
             var claim = new Claim(claimType,claimValue,ClaimValueTypes.String);
             var result = await userManager.AddClaimAsync(user,claim);
 
@@ -38,12 +43,21 @@ namespace Identity.Controllers
         public async Task<IActionResult> Delete(string claimValues)
         {
             var user = await userManager.GetUserAsync(User);
+            if(user is null)
+            {
+                return Unauthorized();
+            }
+
             var claimValuesArray = claimValues.Split(";");
             var claimType = claimValuesArray[0];
             var claimValue = claimValuesArray[1];
             var claimIssuer = claimValuesArray[2];
 
             var claim = User.Claims.Where(x => x.Type == claimType && x.Value == claimValue && x.Issuer == claimIssuer).FirstOrDefault();
+            if(claim is null)
+            {
+                return NotFound();
+            }
             var result = await userManager.RemoveClaimAsync(user,claim);
            
             if (!result.Succeeded)
