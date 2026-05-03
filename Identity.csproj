@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <Folder Include="CustomTagHelpers\" />
+    <Folder Include="Data\" />
     <Folder Include="IdentityPolicy\" />
     <Folder Include="Views\Account\" />
     <Folder Include="Views\Claims\" />

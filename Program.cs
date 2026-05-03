@@ -1,3 +1,4 @@
+using Identity.Data;
 using Identity.IdentityPolicy;
 using Identity.Models;
 using Microsoft.AspNetCore.Identity;
@@ -59,5 +60,14 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+using(var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
+    await IdentitySeed.SeedAsync(userManager,roleManager);
+}
 
 app.Run();
