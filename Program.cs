@@ -12,7 +12,8 @@ if (!builder.Environment.IsDevelopment())
 {
     builder.Configuration.AddUserSecrets<Program>();    
 }
-builder.Services.AddDbContext<AppIdentityDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<AppIdentityDbContext>(options => options.UseSqlite("Data Source=app.db"));
+
 builder.Services.AddIdentity<AppUser,IdentityRole>().AddEntityFrameworkStores<AppIdentityDbContext>().AddDefaultTokenProviders();
 
 builder.Services.Configure<IdentityOptions>(opts =>

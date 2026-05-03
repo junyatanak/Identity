@@ -1,2 +1,6 @@
+*.sqlite
+*.db
 **/bin/
 **/obj/
+*.db-shm
+*.db-wal
