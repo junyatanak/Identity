@@ -34,6 +34,15 @@ builder.Services.ConfigureApplicationCookie(opts =>
     opts.SlidingExpiration = true;
 });
 
+builder.Services.AddAuthorization(opts =>
+{
+    opts.AddPolicy("AspManager", policy =>
+    {
+        policy.RequireRole("Manager");
+        policy.RequireClaim("Coding-Skill", "ASP.NET Core MVC");
+    });
+});
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 

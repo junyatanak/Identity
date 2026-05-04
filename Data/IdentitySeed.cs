@@ -8,7 +8,7 @@ public static class IdentitySeed
 {
     public static async Task SeedAsync(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
     {
-        string[] roles = ["Admin","User",];
+        string[] roles = ["Admin","User","Manager"];
         foreach(var role in roles)
         {
             if(!await roleManager.RoleExistsAsync(role))
