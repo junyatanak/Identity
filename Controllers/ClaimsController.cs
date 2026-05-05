@@ -70,6 +70,9 @@ namespace Identity.Controllers
 
         }
 
+        [Authorize(Policy = "AspManager")]
+        public IActionResult Project() => View("Index",User?.Claims);
+
 
 
         private void Errors(IdentityResult result)
