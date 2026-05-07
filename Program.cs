@@ -1,6 +1,8 @@
+using Identity.CustomPolicy;
 using Identity.Data;
 using Identity.IdentityPolicy;
 using Identity.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -34,12 +36,18 @@ builder.Services.ConfigureApplicationCookie(opts =>
     opts.SlidingExpiration = true;
 });
 
+builder.Services.AddTransient<IAuthorizationHandler,AllowUsersHandler>();
+
 builder.Services.AddAuthorization(opts =>
 {
     opts.AddPolicy("AspManager", policy =>
     {
         policy.RequireRole("Manager");
         policy.RequireClaim("Coding-Skill", "ASP.NET Core MVC");
+    });
+    opts.AddPolicy("AllowTom", policy =>
+    {
+        policy.AddRequirements(new AllowUserPolicy("tom"));
     });
 });
 
