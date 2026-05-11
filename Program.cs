@@ -45,9 +45,9 @@ builder.Services.AddAuthorization(opts =>
         policy.RequireRole("Manager");
         policy.RequireClaim("Coding-Skill", "ASP.NET Core MVC");
     });
-    opts.AddPolicy("AllowTom", policy =>
-    {
-        policy.AddRequirements(new AllowUserPolicy("tom"));
+    opts.AddPolicy("AllowAdmin", policy =>
+    { 
+        policy.AddRequirements(new AllowUserPolicy("admin"));
     });
 });
 
