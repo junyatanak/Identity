@@ -37,6 +37,8 @@ builder.Services.ConfigureApplicationCookie(opts =>
 });
 
 builder.Services.AddTransient<IAuthorizationHandler,AllowUsersHandler>();
+builder.Services.AddTransient<IAuthorizationHandler,AllowPrivateHandler>();
+
 
 builder.Services.AddAuthorization(opts =>
 {
@@ -49,6 +51,11 @@ builder.Services.AddAuthorization(opts =>
     { 
         policy.AddRequirements(new AllowUserPolicy("admin"));
     });
+    opts.AddPolicy("PrivateAccess", policy =>
+    { 
+        policy.AddRequirements(new AllowPrivatePolicy());
+    });
+
 });
 
 // Add services to the container.

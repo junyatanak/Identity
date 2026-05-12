@@ -3,6 +3,7 @@ using Identity.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using SQLitePCL;
 
 namespace Identity.Controllers
 {
@@ -10,9 +11,11 @@ namespace Identity.Controllers
     public class ClaimsController : Controller
     {
         private UserManager<AppUser> userManager;
-        public ClaimsController(UserManager<AppUser> userMgr)
+        private IAuthorizationService authService;
+        public ClaimsController(UserManager<AppUser> userMgr, IAuthorizationService auth)
         {
             userManager = userMgr;
+            authService = auth;
         }
         public IActionResult Index() => View(User?.Claims);
 
@@ -75,6 +78,18 @@ namespace Identity.Controllers
 
         [Authorize(Policy = "AllowAdmin")]
         public IActionResult AdminFiles() => View("Index",User?.Claims);
+
+        public async Task<IActionResult> PrivateAccess(string title)
+        {
+            string[] allowedUsers = ["admin", "luffy"];
+            var authResult = await authService.AuthorizeAsync(User,allowedUsers,"PrivateAccess");
+
+            if(authResult.Succeeded)
+                return View("Index", User.Claims);
+            else
+                return new ChallengeResult();
+
+        }
 
 
 
